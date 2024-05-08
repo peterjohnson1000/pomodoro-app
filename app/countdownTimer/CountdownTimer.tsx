@@ -1,6 +1,14 @@
 'use client'
 import { useEffect, useState } from "react";
 import Alltask from "../task/Task";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
 
 export default function CountdownTimer() {
 
@@ -10,6 +18,7 @@ export default function CountdownTimer() {
     const [minutes, setMinutes] = useState(minutesFromLocalStorage ? parseInt(minutesFromLocalStorage) : 25);
     const [time, setTime] = useState(0);
     const [pause, setPause] = useState(false);
+    const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
@@ -47,6 +56,7 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
+        setDialogBoxOpen(true);
         const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
@@ -64,23 +74,48 @@ export default function CountdownTimer() {
         <div className="flex justify-center flex-col items-center">
             <h1 className="text-5xl mt-10">{formattedTime(time)}</h1>
 
+            {/* set time */}
             <div className="my-5">
                 <input placeholder="minutes" className="border-2 p-2" type="number" value={minutes ? minutes : ""}
                     onChange={(e) => minutesInputOnChange(e)} />
+
+                {/* <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline">Set Time</Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Set Time</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Enter time in minutes.
+                                </p>
+                            </div>
+                            <div className="grid gap-2">
+                                <div className="grid grid-cols-3 items-center gap-4">
+                                    <Label htmlFor="width">Minutes</Label>
+                                    <Input className="col-span-2 h-8" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
+                                </div>
+                            </div>
+                            <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
+                        </div>
+                    </PopoverContent>
+                </Popover> */}
             </div>
+            {/* set time */}
 
             <div>
                 {
                     time > 0 ?
                         <div>
-                            <button className="mr-5 bg-red-600 text-white px-3 py-1 rounded-2xl hover:bg-red-700" onClick={() => setTime(0)}>Stop Timer</button>
-                            <button onClick={() => setPause(!pause)} className={`text-white px-3 py-1 rounded-2xl ${pause ? "bg-green-600 hover:bg-green-700" : "bg-orange-600 hover:bg-orange-700"}`}>
+                            <Button className="mr-5 bg-red-600 text-white hover:bg-red-700" onClick={() => { setTime(0); setPause(false); }}>Stop Timer</Button>
+                            <Button onClick={() => setPause(!pause)} className={`text-white ${pause ? "bg-green-600 hover:bg-green-700" : "bg-orange-600 hover:bg-orange-700"}`}>
                                 {pause ? "Resume" : "Pause"}
-                            </button>
+                            </Button>
                         </div>
                         :
                         <div>
-                            <button className="bg-green-600 text-white px-3 py-1 rounded-2xl hover:bg-green-700" onClick={setHoursAndMinutes}>Start Time</button>
+                            <Button className="bg-green-600 text-white hover:bg-green-700" onClick={setHoursAndMinutes}>Start Time</Button>
                         </div>
                 }
             </div>
