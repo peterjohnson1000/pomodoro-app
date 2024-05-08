@@ -2,34 +2,27 @@
 import { useEffect, useState } from "react";
 import Alltask from "../task/Task";
 
-
 export default function CountdownTimer() {
 
-
     const minutesFromLocalStorage = localStorage.getItem("minutes");
-
 
     const hours = 0;
     const [minutes, setMinutes] = useState(minutesFromLocalStorage ? parseInt(minutesFromLocalStorage) : 25);
     const [time, setTime] = useState(0);
     const [pause, setPause] = useState(false);
 
-
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
     }
-
 
     useEffect(() => {
         if (time > 0) {
             document.title = formattedTime(time);;
         }
 
-
         if (time == 0) {
             document.title = "0h : 0m : 0s"
         }
-
 
         let timer: any;
         if (!pause && time > 0) {
@@ -43,25 +36,20 @@ export default function CountdownTimer() {
         return () => clearInterval(timer);
     }, [time, pause])
 
-
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((time % (1000 * 60)) / 1000);
 
-
         return `${hours}h : ${minutes}m : ${seconds}s`;
     }
-
 
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-
         const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
-
 
     const minutesInputOnChange = (e: any) => {
         if (e.target.value) {
@@ -72,17 +60,14 @@ export default function CountdownTimer() {
         }
     }
 
-
     return (
         <div className="flex justify-center flex-col items-center">
             <h1 className="text-5xl mt-10">{formattedTime(time)}</h1>
-
 
             <div className="my-5">
                 <input placeholder="minutes" className="border-2 p-2" type="number" value={minutes ? minutes : ""}
                     onChange={(e) => minutesInputOnChange(e)} />
             </div>
-
 
             <div>
                 {
@@ -100,9 +85,7 @@ export default function CountdownTimer() {
                 }
             </div>
 
-
             <Alltask />
-
 
         </div>
     );
