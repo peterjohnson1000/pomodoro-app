@@ -21,9 +21,10 @@ const Alltask = () => {
 
     const removeTask = (indexToRemove: number) => {
         setTasks(tasks.filter((_, index) => index !== indexToRemove));
+        setIsCompleted(isCompleted.filter((_, index) => index !== indexToRemove));
     }
 
-    const strikeCompletedTaks = (indexToStrike: number, isChecked: Boolean) => {
+    const strikeCompletedTaks = (indexToStrike: number) => {
         const test: Boolean[] = []
 
         for (let index = 0; index < isCompleted.length; index++) {
@@ -37,6 +38,7 @@ const Alltask = () => {
 
         setIsCompleted(test)
     }
+    console.log(isCompleted)
 
     return (
         <div className="mt-5">
@@ -50,7 +52,7 @@ const Alltask = () => {
                     tasks.map(
                         (task, index) =>
                             <div key={task} className="flex mb-2">
-                                <input id="isCheckboxChecked" type="checkbox" onClick={() => strikeCompletedTaks(index, Boolean(!task[index]))} />
+                                <input id="isCheckboxChecked" type="checkbox" onClick={() => strikeCompletedTaks(index)} />
                                 <h1 className={`w-[250px] border-2 p-2 mr-2 ${isCompleted[index] ? "line-through" : "no-underline"}`}>{task}</h1>
                                 <button onClick={() => removeTask(index)} className="bg-red-600 text-white p-2 px-4 rounded-sm hover:bg-red-700">-</button>
                             </div>
