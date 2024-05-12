@@ -1,14 +1,24 @@
 'use client'
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input"
 
-//filer
+
+//filter
 //clearInterval
 //custom hook in nextts
 
+
 const Alltask = () => {
 
-    const [tasks, setTasks] = useState<string[]>([]);
+
+    const allTasksFromLocalStoage = localStorage.getItem("allTasks");
+
+    const [tasks, setTasks] = useState<string[]>(allTasksFromLocalStoage ? JSON.parse(allTasksFromLocalStoage) : []);
     const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
+
+    useEffect(() => {
+        localStorage.setItem("allTasks", JSON.stringify(tasks))
+    }, [tasks])
 
     const addTask = (e: any) => {
         e.preventDefault();
@@ -16,6 +26,7 @@ const Alltask = () => {
         if (e.target.taskUserInput.value) {
             setTasks([...tasks, e.target.taskUserInput.value]);
             setIsCompleted([...isCompleted, false]);
+
             e.target.taskUserInput.value = "";
         }
     }
@@ -36,15 +47,13 @@ const Alltask = () => {
                 test.push(isCompleted[index]);
             }
         }
-
         setIsCompleted(test)
     }
-    console.log(isCompleted)
 
     return (
-        <div className="mt-5">
+        <div>
             <form className="flex" onSubmit={addTask}>
-                <input className="w-[250px] border-2 p-2 mr-2" placeholder="eat the frog first!" id="taskUserInput" autoComplete="off" />
+                <Input className="w-[250px] border-2 p-2 mr-2" placeholder="eat the frog first!" id="taskUserInput" autoComplete="off" />
                 <button type="submit" className="bg-red-600 text-white p-2 px-4 rounded-sm hover:bg-red-700">+</button>
             </form>
 
@@ -52,7 +61,7 @@ const Alltask = () => {
                 {
                     tasks.map(
                         (task, index) =>
-                            <div key={task} className="flex mb-2">
+                            <div key={task + index} className="flex mb-2">
                                 <input id="isCheckboxChecked" type="checkbox" onClick={() => strikeCompletedTaks(index)} />
                                 <h1 className={`w-[250px] border-2 p-2 mr-2 ${isCompleted[index] ? "line-through" : "no-underline"}`}>{task}</h1>
                                 <button onClick={() => removeTask(index)} className="bg-red-600 text-white p-2 px-4 rounded-sm hover:bg-red-700">-</button>
