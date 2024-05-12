@@ -1,12 +1,13 @@
 import { PopoverDemo } from "./PopOver";
 import CountdownTimer from "./countdownTimer/CountdownTimer";
+import Alltask from "./task/Task";
 
 export default function Home() {
 
   return (
-    <div>
+    <div className="flex justify-center flex-col items-center">
       <CountdownTimer />
-      {/* <PopoverDemo /> */}
+      <Alltask />
     </div>
   );
 }

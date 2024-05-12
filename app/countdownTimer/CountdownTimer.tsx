@@ -1,6 +1,5 @@
 'use client'
 import { useEffect, useState } from "react";
-import Alltask from "../task/Task";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,6 +8,8 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { IoCloseCircleSharp } from "react-icons/io5";
+// import { Progress } from "@/components/ui/progress"
 
 export default function CountdownTimer() {
 
@@ -56,7 +57,7 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-        setDialogBoxOpen(true);
+        setDialogBoxOpen(!dialogBoxOpen)
         const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
@@ -72,39 +73,10 @@ export default function CountdownTimer() {
 
     return (
         <div className="flex justify-center flex-col items-center">
-            <h1 className="text-5xl mt-10">{formattedTime(time)}</h1>
+            <h1 className={`mt-10 ${time > 0 ? "text-7xl" : "text-5xl"}`}>{formattedTime(time)}</h1>
+            {/* <Progress value={progress} className="w-[60%]" /> */}
 
-            {/* set time */}
             <div className="my-5">
-                <input placeholder="minutes" className="border-2 p-2" type="number" value={minutes ? minutes : ""}
-                    onChange={(e) => minutesInputOnChange(e)} />
-
-                {/* <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="outline">Set Time</Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80">
-                        <div className="grid gap-4">
-                            <div className="space-y-2">
-                                <h4 className="font-medium leading-none">Set Time</h4>
-                                <p className="text-sm text-muted-foreground">
-                                    Enter time in minutes.
-                                </p>
-                            </div>
-                            <div className="grid gap-2">
-                                <div className="grid grid-cols-3 items-center gap-4">
-                                    <Label htmlFor="width">Minutes</Label>
-                                    <Input className="col-span-2 h-8" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
-                                </div>
-                            </div>
-                            <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
-                        </div>
-                    </PopoverContent>
-                </Popover> */}
-            </div>
-            {/* set time */}
-
-            <div>
                 {
                     time > 0 ?
                         <div>
@@ -114,14 +86,31 @@ export default function CountdownTimer() {
                             </Button>
                         </div>
                         :
-                        <div>
-                            <Button className="bg-green-600 text-white hover:bg-green-700" onClick={setHoursAndMinutes}>Start Time</Button>
-                        </div>
+                        <Popover open={dialogBoxOpen}>
+                            <PopoverTrigger asChild>
+                                <Button onClick={() => setDialogBoxOpen(!dialogBoxOpen)} variant="outline">Set Time</Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80">
+                                <div className="flex justify-end"><IoCloseCircleSharp className="hover:cu" onClick={() => setDialogBoxOpen(!dialogBoxOpen)} /></div>
+                                <div className="grid gap-4">
+                                    <div className="space-y-2">
+                                        <h4 className="font-medium leading-none">Set Time</h4>
+                                        <p className="text-sm text-muted-foreground">
+                                            Enter time in minutes.
+                                        </p>
+                                    </div>
+                                    <div className="grid gap-2">
+                                        <div className="grid grid-cols-3 items-center gap-4">
+                                            <Label htmlFor="width">Minutes</Label>
+                                            <Input className="col-span-2 h-8" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
+                                        </div>
+                                    </div>
+                                    <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
+                                </div>
+                            </PopoverContent>
+                        </Popover>
                 }
             </div>
-
-            <Alltask />
-
         </div>
     );
 }
