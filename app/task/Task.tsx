@@ -1,24 +1,23 @@
 'use client'
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input"
 
+import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 
 //filter
 //clearInterval
 //custom hook in nextts
 
-
 const Alltask = () => {
-
-
     const allTasksFromLocalStoage = localStorage.getItem("allTasks");
+    const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
 
     const [tasks, setTasks] = useState<string[]>(allTasksFromLocalStoage ? JSON.parse(allTasksFromLocalStoage) : []);
-    const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
+    const [isCompleted, setIsCompleted] = useState<Boolean[]>(allCompletedTasksFromLocalStoage ? JSON.parse(allCompletedTasksFromLocalStoage) : []);
 
     useEffect(() => {
-        localStorage.setItem("allTasks", JSON.stringify(tasks))
-    }, [tasks])
+        localStorage.setItem("allTasks", JSON.stringify(tasks));
+        localStorage.setItem("completedTasks", JSON.stringify(isCompleted));
+    }, [tasks, isCompleted])
 
     const addTask = (e: any) => {
         e.preventDefault();
@@ -62,7 +61,7 @@ const Alltask = () => {
                     tasks.map(
                         (task, index) =>
                             <div key={task + index} className="flex mb-2">
-                                <input id="isCheckboxChecked" type="checkbox" onClick={() => strikeCompletedTaks(index)} />
+                                <input id="isCheckboxChecked" type="checkbox" defaultChecked={Boolean(isCompleted[index])} onClick={() => strikeCompletedTaks(index)} />
                                 <h1 className={`w-[250px] border-2 p-2 mr-2 ${isCompleted[index] ? "line-through" : "no-underline"}`}>{task}</h1>
                                 <button onClick={() => removeTask(index)} className="bg-red-600 text-white p-2 px-4 rounded-sm hover:bg-red-700">-</button>
                             </div>
