@@ -18,6 +18,7 @@ const Alltask = () => {
     const [tasks, setTasks] = useState<string[]>([]);
     const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
+    const [loaderState, setLoaderState] = useState<boolean>(false);
 
     useEffect(() => {
         if (initialDataFetched) {
@@ -35,6 +36,8 @@ const Alltask = () => {
             setIsCompleted(JSON.parse(allCompletedTasksFromLocalStoage));
             setInitialDataFetched(true);
         }
+
+        setLoaderState(true);
 
     }, [])
 
@@ -76,7 +79,7 @@ const Alltask = () => {
             </form>
 
             {
-                initialDataFetched ?
+                loaderState ?
                     <div className="mt-5">
                         {
                             tasks.map(
