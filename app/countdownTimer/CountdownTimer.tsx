@@ -1,25 +1,29 @@
 'use client'
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/components/ui/popover"
+} from "@/components/ui/popover";
 import { IoCloseCircleSharp } from "react-icons/io5";
-// import { Progress } from "@/components/ui/progress"
+import { FaRegStopCircle } from "react-icons/fa";
+import { FaRegPauseCircle } from "react-icons/fa";
+import { MdOutlineNotStarted } from "react-icons/md";
 
 export default function CountdownTimer() {
 
-    const minutesFromLocalStorage = localStorage.getItem("minutes");
+    // const minutesFromLocalStorage = localStorage.getItem("minutes");
+    // const [minutes, setMinutes] = useState(minutesFromLocalStorage ? parseInt(minutesFromLocalStorage) : 25);
 
-    const hours = 0;
-    const [minutes, setMinutes] = useState(minutesFromLocalStorage ? parseInt(minutesFromLocalStorage) : 25);
-    const [time, setTime] = useState(0);
-    const [pause, setPause] = useState(false);
-    const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
+    const hours: number = 0;
+    const [minutes, setMinutes] = useState<number>(25);
+    const [time, setTime] = useState<number>(0);
+    const [pause, setPause] = useState<boolean>(false);
+    const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false);
+    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
@@ -45,6 +49,14 @@ export default function CountdownTimer() {
         }
         return () => clearInterval(timer);
     }, [time, pause])
+
+    useEffect(() => {
+        const minutesFromLocalStorage = localStorage.getItem("minutes");
+        if (!initialDataFetched && minutesFromLocalStorage) {
+            setMinutes(parseInt(minutesFromLocalStorage))
+            setInitialDataFetched(true);
+        }
+    }, [])
 
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -79,11 +91,11 @@ export default function CountdownTimer() {
             <div className="my-5">
                 {
                     time > 0 ?
-                        <div>
-                            <Button className="mr-5 bg-red-600 text-white hover:bg-red-700" onClick={() => { setTime(0); setPause(false); }}>Stop Timer</Button>
-                            <Button onClick={() => setPause(!pause)} className={`text-white ${pause ? "bg-green-600 hover:bg-green-700" : "bg-orange-600 hover:bg-orange-700"}`}>
-                                {pause ? "Resume" : "Pause"}
-                            </Button>
+                        <div className="flex justify-center items-center">
+                            <FaRegStopCircle className="text-4xl mr-3 hover:cursor-pointer" onClick={() => { setTime(0); setPause(false); }} />
+                            <div onClick={() => setPause(!pause)}>
+                                {pause ? <MdOutlineNotStarted className="text-4xl hover:cursor-pointer" /> : <FaRegPauseCircle className="text-4xl hover:cursor-pointer" />}
+                            </div>
                         </div>
                         :
                         <Popover open={dialogBoxOpen}>

@@ -1,4 +1,3 @@
-import { PopoverDemo } from "./PopOver";
 import CountdownTimer from "./countdownTimer/CountdownTimer";
 import Alltask from "./task/Task";
 

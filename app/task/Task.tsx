@@ -1,5 +1,4 @@
 'use client'
-
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 
@@ -8,16 +7,36 @@ import { Input } from "@/components/ui/input";
 //custom hook in nextts
 
 const Alltask = () => {
-    const allTasksFromLocalStoage = localStorage.getItem("allTasks");
-    const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
 
-    const [tasks, setTasks] = useState<string[]>(allTasksFromLocalStoage ? JSON.parse(allTasksFromLocalStoage) : []);
-    const [isCompleted, setIsCompleted] = useState<Boolean[]>(allCompletedTasksFromLocalStoage ? JSON.parse(allCompletedTasksFromLocalStoage) : []);
+
+    // const allTasksFromLocalStoage = localStorage.getItem("allTasks");
+    // const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
+
+    // const [tasks, setTasks] = useState<string[]>(allTasksFromLocalStoage ? JSON.parse(allTasksFromLocalStoage) : []);
+    // const [isCompleted, setIsCompleted] = useState<Boolean[]>(allCompletedTasksFromLocalStoage ? JSON.parse(allCompletedTasksFromLocalStoage) : []);
+
+    const [tasks, setTasks] = useState<string[]>([]);
+    const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
+    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
 
     useEffect(() => {
-        localStorage.setItem("allTasks", JSON.stringify(tasks));
-        localStorage.setItem("completedTasks", JSON.stringify(isCompleted));
+        if (initialDataFetched) {
+            localStorage.setItem("allTasks", JSON.stringify(tasks));
+            localStorage.setItem("completedTasks", JSON.stringify(isCompleted));
+        }
     }, [tasks, isCompleted])
+
+    useEffect(() => {
+        const allTasksFromLocalStoage = localStorage.getItem("allTasks");
+        const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
+
+        if (!initialDataFetched && allTasksFromLocalStoage && allCompletedTasksFromLocalStoage) {
+            setTasks(JSON.parse(allTasksFromLocalStoage));
+            setIsCompleted(JSON.parse(allCompletedTasksFromLocalStoage));
+            setInitialDataFetched(true);
+        }
+
+    }, [])
 
     const addTask = (e: any) => {
         e.preventDefault();
