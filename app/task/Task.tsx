@@ -17,7 +17,7 @@ const Alltask = () => {
 
     const [tasks, setTasks] = useState<string[]>([]);
     const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
-    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
+    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false); //fix for localStorage red error
     const [loaderState, setLoaderState] = useState<boolean>(false);
 
     useEffect(() => {
@@ -32,13 +32,13 @@ const Alltask = () => {
         const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
 
         if (!initialDataFetched && allTasksFromLocalStoage && allCompletedTasksFromLocalStoage) {
+            console.log("hi")
             setTasks(JSON.parse(allTasksFromLocalStoage));
             setIsCompleted(JSON.parse(allCompletedTasksFromLocalStoage));
-            setInitialDataFetched(true);
         }
 
+        setInitialDataFetched(true);
         setLoaderState(true);
-
     }, [])
 
     const addTask = (e: any) => {
