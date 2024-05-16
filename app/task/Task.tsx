@@ -58,17 +58,12 @@ const Alltask = () => {
     }
 
     const strikeCompletedTaks = (indexToStrike: number) => {
-        const test: Boolean[] = []
 
-        for (let index = 0; index < isCompleted.length; index++) {
-            if (index == indexToStrike) {
-                test.push(!isCompleted[index]);
-            }
-            else {
-                test.push(isCompleted[index]);
-            }
-        }
-        setIsCompleted(test)
+        setIsCompleted(prevState =>
+            prevState.map((value, index) =>
+                index === indexToStrike ? !value : value
+            )
+        )
     }
 
     return (
