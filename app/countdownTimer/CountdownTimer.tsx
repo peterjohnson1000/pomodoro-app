@@ -99,7 +99,7 @@ export default function CountdownTimer() {
                                 <Button onClick={() => setDialogBoxOpen(!dialogBoxOpen)} variant="outline">Set Time</Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-80">
-                                <div className="flex justify-end"><IoCloseCircleSharp className="hover:cu" onClick={() => setDialogBoxOpen(!dialogBoxOpen)} /></div>
+                                <div className="flex justify-end"><IoCloseCircleSharp className="hover:cursor-pointer" onClick={() => setDialogBoxOpen(!dialogBoxOpen)} /></div>
                                 <div className="grid gap-4">
                                     <div className="space-y-2">
                                         <h4 className="font-medium leading-none">Set Time</h4>
