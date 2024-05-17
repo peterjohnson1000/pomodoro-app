@@ -15,9 +15,6 @@ import { MdOutlineNotStarted } from "react-icons/md";
 
 export default function CountdownTimer() {
 
-    // const minutesFromLocalStorage = localStorage.getItem("minutes");
-    // const [minutes, setMinutes] = useState(minutesFromLocalStorage ? parseInt(minutesFromLocalStorage) : 25);
-
     const hours: number = 0;
     const [minutes, setMinutes] = useState<number>(25);
     const [time, setTime] = useState<number>(0);
@@ -86,7 +83,6 @@ export default function CountdownTimer() {
     return (
         <div className="flex justify-center flex-col items-center">
             <h1 className={`mt-10 ${time > 0 ? "text-7xl" : "text-5xl"}`}>{formattedTime(time)}</h1>
-            {/* <Progress value={progress} className="w-[60%]" /> */}
 
             <div className="my-5">
                 {

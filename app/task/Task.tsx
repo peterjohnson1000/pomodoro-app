@@ -8,16 +8,9 @@ import { Input } from "@/components/ui/input";
 
 const Alltask = () => {
 
-
-    // const allTasksFromLocalStoage = localStorage.getItem("allTasks");
-    // const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
-
-    // const [tasks, setTasks] = useState<string[]>(allTasksFromLocalStoage ? JSON.parse(allTasksFromLocalStoage) : []);
-    // const [isCompleted, setIsCompleted] = useState<Boolean[]>(allCompletedTasksFromLocalStoage ? JSON.parse(allCompletedTasksFromLocalStoage) : []);
-
     const [tasks, setTasks] = useState<string[]>([]);
     const [isCompleted, setIsCompleted] = useState<Boolean[]>([]);
-    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false); //fix for localStorage red error
+    const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false); //fix for localStorage ref error
     const [loaderState, setLoaderState] = useState<boolean>(false);
 
     useEffect(() => {
@@ -32,7 +25,6 @@ const Alltask = () => {
         const allCompletedTasksFromLocalStoage = localStorage.getItem("completedTasks");
 
         if (!initialDataFetched && allTasksFromLocalStoage && allCompletedTasksFromLocalStoage) {
-            console.log("hi")
             setTasks(JSON.parse(allTasksFromLocalStoage));
             setIsCompleted(JSON.parse(allCompletedTasksFromLocalStoage));
         }
@@ -58,7 +50,6 @@ const Alltask = () => {
     }
 
     const strikeCompletedTaks = (indexToStrike: number) => {
-
         setIsCompleted(prevState =>
             prevState.map((value, index) =>
                 index === indexToStrike ? !value : value
