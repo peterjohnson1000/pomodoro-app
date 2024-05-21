@@ -34,12 +34,12 @@ export default function CountdownTimer() {
 
         if (time == 0) {
             document.title = "0h : 0m : 0s"
-            if(!stop) {
+            if (!stop) {
                 //play a sound when timer naturally becomes 0
                 playAudio();
-                console.log("before",stop);
+                console.log("before", stop);
                 setStop(false);
-                console.log("after",stop);
+                console.log("after", stop);
             }
         }
 
@@ -90,13 +90,15 @@ export default function CountdownTimer() {
     }
 
     const playAudio = () => {
+        console.log("audio played?")
         const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
+        audio.muted = false;
         audio.play();
     }
 
     return (
         <div className="flex justify-center flex-col items-center">
-            <h1 className={`mt-10 border bg-black text-white p-5 rounded-xl ${time > 0 ? "text-7xl" : "text-5xl"}`}>{formattedTime(time)}</h1>
+            <h1 className={`mt-10 border w-[350px] text-center bg-black text-white p-5 rounded-xl ${time > 0 ? "text-7xl w-[550px]" : "text-5xl"}`}>{formattedTime(time)}</h1>
 
             <div className="my-5">
                 {
