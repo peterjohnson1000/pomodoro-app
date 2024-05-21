@@ -19,6 +19,7 @@ export default function CountdownTimer() {
     const [minutes, setMinutes] = useState<number>(25);
     const [time, setTime] = useState<number>(0);
     const [pause, setPause] = useState<boolean>(false);
+    const [stop, setStop] = useState<boolean>(false); //for playing audio(stop button pressed/not)
     const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false);
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
 
@@ -33,6 +34,13 @@ export default function CountdownTimer() {
 
         if (time == 0) {
             document.title = "0h : 0m : 0s"
+            if(!stop) {
+                //play a sound when timer naturally becomes 0
+                playAudio();
+                console.log("before",stop);
+                setStop(false);
+                console.log("after",stop);
+            }
         }
 
         let timer: any;
@@ -44,6 +52,7 @@ export default function CountdownTimer() {
         else {
             clearInterval(timer);
         }
+
         return () => clearInterval(timer);
     }, [time, pause])
 
@@ -53,7 +62,7 @@ export default function CountdownTimer() {
             setMinutes(parseInt(minutesFromLocalStorage))
             setInitialDataFetched(true);
         }
-    }, [])
+    }, []);
 
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -80,15 +89,20 @@ export default function CountdownTimer() {
         }
     }
 
+    const playAudio = () => {
+        const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
+        audio.play();
+    }
+
     return (
         <div className="flex justify-center flex-col items-center">
-            <h1 className={`mt-10 ${time > 0 ? "text-7xl" : "text-5xl"}`}>{formattedTime(time)}</h1>
+            <h1 className={`mt-10 border bg-black text-white p-5 rounded-xl ${time > 0 ? "text-7xl" : "text-5xl"}`}>{formattedTime(time)}</h1>
 
             <div className="my-5">
                 {
                     time > 0 ?
                         <div className="flex justify-center items-center">
-                            <FaRegStopCircle className="text-4xl mr-3 hover:cursor-pointer" onClick={() => { setTime(0); setPause(false); }} />
+                            <FaRegStopCircle className="text-4xl mr-3 hover:cursor-pointer" onClick={() => { setTime(0); setPause(false); setStop(true); }} />
                             <div onClick={() => setPause(!pause)}>
                                 {pause ? <MdOutlineNotStarted className="text-4xl hover:cursor-pointer" /> : <FaRegPauseCircle className="text-4xl hover:cursor-pointer" />}
                             </div>
