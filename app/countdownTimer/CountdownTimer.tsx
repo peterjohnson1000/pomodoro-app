@@ -1,14 +1,7 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { IoCloseCircleSharp } from "react-icons/io5";
 import { FaRegStopCircle } from "react-icons/fa";
 import { FaRegPauseCircle } from "react-icons/fa";
 import { MdOutlineNotStarted } from "react-icons/md";
@@ -22,10 +15,15 @@ export default function CountdownTimer() {
     const [stop, setStop] = useState<boolean>(false); //for playing audio(stop button pressed/not)
     const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false);
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
+    const startTimeRef = useRef<any>();
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
     }
+
+    // due to the browser throttling issue we are going to use Date()
+    // even if the browser throttles we need to continue from elapsed time
+    // startTimeRef stores the time at which the timer is started/resumed
 
     useEffect(() => {
         if (time > 0) {
@@ -34,19 +32,21 @@ export default function CountdownTimer() {
 
         if (time == 0) {
             document.title = "0h : 0m : 0s"
-            if (!stop) {
+            if(!stop) {
                 //play a sound when timer naturally becomes 0
-                playAudio();
-                console.log("before", stop);
+                // playAudio();
                 setStop(false);
-                console.log("after", stop);
             }
         }
 
         let timer: any;
         if (!pause && time > 0) {
-            timer = setTimeout(() => {
-                setTime(time - 1000);
+            timer = setInterval(() => {
+                let now = new Date().getTime(); //current time
+                const elapsedTime = now - (startTimeRef.current || now); //calculating the elapsed time
+                setTime((prevTime) => Math.max(prevTime - elapsedTime, 0));
+                startTimeRef.current = now;
+                // setTime((prevTime) => prevTime - 1000);
             }, 1000)
         }
         else {
@@ -90,16 +90,13 @@ export default function CountdownTimer() {
     }
 
     const playAudio = () => {
-        console.log("audio played?")
         const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
-        audio.muted = false;
         audio.play();
     }
 
     return (
         <div className="flex justify-center flex-col items-center">
-            <h1 className={`mt-10 border w-[350px] text-center bg-black text-white p-5 rounded-xl ${time > 0 ? "text-7xl w-[550px]" : "text-5xl"}`}>{formattedTime(time)}</h1>
-
+            <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl">{formattedTime(time)}</h1>
             <div className="my-5">
                 {
                     time > 0 ?
@@ -110,29 +107,13 @@ export default function CountdownTimer() {
                             </div>
                         </div>
                         :
-                        <Popover open={dialogBoxOpen}>
-                            <PopoverTrigger asChild>
-                                <Button onClick={() => setDialogBoxOpen(!dialogBoxOpen)} variant="outline">Set Time</Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80">
-                                <div className="flex justify-end"><IoCloseCircleSharp className="hover:cursor-pointer" onClick={() => setDialogBoxOpen(!dialogBoxOpen)} /></div>
-                                <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                        <h4 className="font-medium leading-none">Set Time</h4>
-                                        <p className="text-sm text-muted-foreground">
-                                            Enter time in minutes.
-                                        </p>
-                                    </div>
-                                    <div className="grid gap-2">
-                                        <div className="grid grid-cols-3 items-center gap-4">
-                                            <Label htmlFor="width">Minutes</Label>
-                                            <Input className="col-span-2 h-8" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
-                                        </div>
-                                    </div>
-                                    <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
+                        <div>
+                            <p className="text-sm text-muted-foreground"> Enter time in minutes.</p>
+                            <div className="flex items-center">
+                                <Input className="col-span-2 h-10 mr-2" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
+                                <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
+                            </div>
+                        </div>
                 }
             </div>
         </div>
