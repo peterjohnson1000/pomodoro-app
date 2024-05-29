@@ -15,7 +15,13 @@ export default function CountdownTimer() {
     const [stop, setStop] = useState<boolean>(false); //for playing audio(stop button pressed/not)
     // const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false); //all related can be removed from the codebase
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
+    const [displayTimer, setDisplayTimer] = useState({
+        hours: 0,
+        minutes:0,
+        seconds:0
+    });
     const startTimeRef = useRef<any>();
+
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
@@ -67,6 +73,12 @@ export default function CountdownTimer() {
         const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((time % (1000 * 60)) / 1000);
 
+        setDisplayTimer({
+                hours:hours,
+                minutes: minutes,
+                seconds: seconds
+            })
+
         return `${hours}h : ${minutes}m : ${seconds}s`;
     }
 
@@ -94,7 +106,7 @@ export default function CountdownTimer() {
 
     return (
         <div className="flex justify-center flex-col items-center">
-            <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl">{formattedTime(time)}</h1>
+            <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl">{displayTimer.hours}h : {displayTimer.minutes}m : {displayTimer.seconds}s</h1>
             <div className="my-5">
                 {
                     time > 0 ?
