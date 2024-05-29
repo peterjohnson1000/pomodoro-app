@@ -11,19 +11,15 @@ export default function CountdownTimer() {
     const hours: number = 0;
     const [minutes, setMinutes] = useState<number>(25);
     const [time, setTime] = useState<number>(0);
-    const [pause, setPause] = useState<boolean>(false);
+    const [pause, setPause] = useState<boolean>(false); //temp disabling the pause button
     const [stop, setStop] = useState<boolean>(false); //for playing audio(stop button pressed/not)
-    const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false);
+    // const [dialogBoxOpen, setDialogBoxOpen] = useState<boolean>(false); //all related can be removed from the codebase
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
     const startTimeRef = useRef<any>();
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
     }
-
-    // due to the browser throttling issue we are going to use Date()
-    // even if the browser throttles we need to continue from elapsed time
-    // startTimeRef stores the time at which the timer is started/resumed
 
     useEffect(() => {
         if (time > 0) {
@@ -42,6 +38,8 @@ export default function CountdownTimer() {
         let timer: any;
         if (!pause && time > 0) {
             timer = setInterval(() => {
+                // due to the browser throttling issue we are going to use Date()
+                // even if the browser throttles we need to continue from elapsed time
                 let now = new Date().getTime(); //current time
                 const elapsedTime = now - (startTimeRef.current || now); //calculating the elapsed time
                 setTime((prevTime) => Math.max(prevTime - elapsedTime, 0));
@@ -60,8 +58,8 @@ export default function CountdownTimer() {
         const minutesFromLocalStorage = localStorage.getItem("minutes");
         if (!initialDataFetched && minutesFromLocalStorage) {
             setMinutes(parseInt(minutesFromLocalStorage))
-            setInitialDataFetched(true);
         }
+        setInitialDataFetched(true);
     }, []);
 
     const formattedTime = (time: any) => {
@@ -75,7 +73,7 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-        setDialogBoxOpen(!dialogBoxOpen)
+        // setDialogBoxOpen(!dialogBoxOpen)
         const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
@@ -102,15 +100,23 @@ export default function CountdownTimer() {
                     time > 0 ?
                         <div className="flex justify-center items-center">
                             <FaRegStopCircle className="text-4xl mr-3 hover:cursor-pointer" onClick={() => { setTime(0); setPause(false); setStop(true); }} />
-                            <div onClick={() => setPause(!pause)}>
+                            {/* temp disabling the pause button */}
+                            {/* <div onClick={() => setPause(!pause)}>
                                 {pause ? <MdOutlineNotStarted className="text-4xl hover:cursor-pointer" /> : <FaRegPauseCircle className="text-4xl hover:cursor-pointer" />}
-                            </div>
+                            </div> */}
                         </div>
                         :
                         <div>
                             <p className="text-sm text-muted-foreground"> Enter time in minutes.</p>
                             <div className="flex items-center">
-                                <Input className="col-span-2 h-10 mr-2" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
+                                {/* value={minutes ? minutes : ""} */}
+                                {/* {
+                                    !initialDataFetched ?
+                                    <Input className="col-span-2 h-10 mr-2" type="text" value="loading" readOnly/> :
+                                    <Input className="col-span-2 h-10 mr-2" type="number" value={minutes} onChange={(e) => minutesInputOnChange(e)} />    
+                                } */}
+
+                                <Input className="col-span-2 h-10 mr-2" type={initialDataFetched ? "number" : "text"} value={initialDataFetched == false ? "fetching minutes..." : minutes} onChange={(e) => minutesInputOnChange(e)} />
                                 <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
                             </div>
                         </div>
