@@ -107,8 +107,9 @@ export default function CountdownTimer() {
             minutes: 0,
             seconds: 0
         })
+        startTimeRef.current = 0;
     } 
-    
+
     const playAudio = () => {
         const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
         audio.play();
