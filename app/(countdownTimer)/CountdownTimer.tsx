@@ -49,6 +49,8 @@ export default function CountdownTimer() {
         if (time == 0) {
             document.title = "0h : 0m : 0s"
             if (!stop && initialDataFetched) {
+                console.log("test");
+                console.log("stop", stop);
                 // initialDataFetched added otherwise notification will be triggered for every refresh
                 //play a sound when timer naturally becomes 0
                 // playAudio();
@@ -148,6 +150,7 @@ export default function CountdownTimer() {
     }
 
     function notifyMe() {
+        console.log("test2");
         if (Notification.permission === "granted") {
             const notification = new Notification("Time Up!");
         } else if (Notification.permission !== "denied") {
@@ -168,12 +171,12 @@ export default function CountdownTimer() {
                     <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.hours < 0 ? `0${displayTimer.hours}` : displayTimer.hours}</h1>
                     <p className="font-light">hours</p>
                 </div>
-                <p className="mt-10 text-5xl">:</p>
+                <p className="text-5xl px-1">:</p>
                 <div className="text-center">
                     <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[130px]">{displayTimer.minutes < 0 ? `0${displayTimer.minutes}` : displayTimer.minutes}</h1>
                     <p className="font-light">minutes</p>
                 </div>
-                <p className="mt-10 text-5xl">:</p>
+                <p className="text-5xl px-1">:</p>
                 <div className="text-center">
                     <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.seconds < 0 ? `0${displayTimer.seconds}` : displayTimer.seconds}</h1>
                     <p className="font-light">seconds</p>
