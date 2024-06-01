@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaRegStopCircle } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { MdOutlineNotStarted } from "react-icons/md";
 
 export default function CountdownTimer() {
     const hours: number = 0;
+    let startorstop: Boolean = true; // used to differentiate between start and stop for shortcut "s" 
     const [minutes, setMinutes] = useState<number>(25);
     const [time, setTime] = useState<number>(0);
     const [pause, setPause] = useState<boolean>(false); //temp disabling the pause button
@@ -16,8 +17,8 @@ export default function CountdownTimer() {
     const [initialDataFetched, setInitialDataFetched] = useState<boolean>(false);
     const [displayTimer, setDisplayTimer] = useState({
         hours: 0,
-        minutes:0,
-        seconds:0
+        minutes: 0,
+        seconds: 0
     });
     const startTimeRef = useRef<any>();
 
@@ -25,18 +26,33 @@ export default function CountdownTimer() {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
     }
 
+    const handleKeyPress = useCallback((event: any) => {
+        // console.log(`Key pressed: ${event.key}`);
+        if (`${event.key}` == "s") {
+            if (startorstop) {
+                setHoursAndMinutes(event);
+                startorstop = false;
+            }
+            else {
+                stopTimer();
+                startorstop = true;
+            }
+        }
+    }, [minutes]);
+
     useEffect(() => {
+
         if (time > 0) {
             document.title = formattedTime(time);;
         }
 
         if (time == 0) {
             document.title = "0h : 0m : 0s"
-            if(!stop) {
+            if (!stop) {
                 //play a sound when timer naturally becomes 0
                 // playAudio();
                 setStop(false);
-                // notifyMe();
+                notifyMe();
             }
         }
 
@@ -67,16 +83,24 @@ export default function CountdownTimer() {
         setInitialDataFetched(true);
     }, []);
 
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyPress);
+
+        return () => { //this represents componentwillunmount
+            document.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [handleKeyPress]);
+
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((time % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((time % (1000 * 60)) / 1000);
 
         setDisplayTimer({
-                hours:hours,
-                minutes: minutes,
-                seconds: seconds
-            })
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
+        })
 
         return `${hours}h : ${minutes}m : ${seconds}s`;
     }
@@ -99,16 +123,16 @@ export default function CountdownTimer() {
     }
 
     const stopTimer = () => {
-        setTime(0); 
-        setPause(false); 
+        setTime(0);
+        setPause(false);
         setStop(true);
         setDisplayTimer({
-            hours:0,
+            hours: 0,
             minutes: 0,
             seconds: 0
         })
         startTimeRef.current = 0;
-    } 
+    }
 
     const playAudio = () => {
         const audio = new Audio("https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3");
@@ -117,32 +141,35 @@ export default function CountdownTimer() {
 
     function notifyMe() {
         if (Notification.permission === "granted") {
-          // Check whether notification permissions have already been granted;
-          // if so, create a notification
-          const notification = new Notification("Hi there!");
-          // …
+            const notification = new Notification("Time Up!");
         } else if (Notification.permission !== "denied") {
-          // We need to ask the user for permission
-          Notification.requestPermission().then((permission) => {
-            // If the user accepts, let's create a notification
-            if (permission === "granted") {
-              const notification = new Notification("Hi there!");
-              // …
-            }
-          });
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    const notification = new Notification("Time Up!");
+                }
+            });
         }
     }
 
     return (
         <div className="flex justify-center flex-col items-center">
             {/* <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl">{displayTimer.hours}h : {displayTimer.minutes}m : {displayTimer.seconds}s</h1> */}
-            
+
             <div className="flex justify-center items-center">
-                <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.hours < 0 ? `0${displayTimer.hours}` : displayTimer.hours}h</h1>
+                <div className="text-center">
+                    <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.hours < 0 ? `0${displayTimer.hours}` : displayTimer.hours}</h1>
+                    <p className="font-light">hours</p>
+                </div>
                 <p className="mt-10 text-5xl">:</p>
-                <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[130px]">{displayTimer.minutes < 0 ? `0${displayTimer.minutes}` : displayTimer.minutes}m</h1>
+                <div className="text-center">
+                    <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[130px]">{displayTimer.minutes < 0 ? `0${displayTimer.minutes}` : displayTimer.minutes}</h1>
+                    <p className="font-light">minutes</p>
+                </div>
                 <p className="mt-10 text-5xl">:</p>
-                <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.seconds < 0 ? `0${displayTimer.seconds}` : displayTimer.seconds}s</h1>
+                <div className="text-center">
+                    <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.seconds < 0 ? `0${displayTimer.seconds}` : displayTimer.seconds}</h1>
+                    <p className="font-light">seconds</p>
+                </div>
             </div>
 
             <div className="my-5">
@@ -168,9 +195,9 @@ export default function CountdownTimer() {
                                 {/* <Input className="col-span-2 h-10 mr-2" type={initialDataFetched ? "number" : "text"} value={initialDataFetched == false ? "fetching minutes..." : minutes} onChange={(e) => minutesInputOnChange(e)} /> */}
                                 {
                                     !initialDataFetched ?
-                                    <p className="w-[185px] h-10 border p-2 rounded-md mr-2 my-1">fetching minutes...</p>
-                                    :
-                                    <Input className="w-[185px] h-10 mr-2 my-1" type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
+                                        <p className="w-[185px] h-10 border p-2 rounded-md mr-2 my-1">fetching minutes...</p>
+                                        :
+                                        <Input className="w-[185px] h-10 mr-2 my-1" autoFocus type="number" value={minutes ? minutes : ""} onChange={(e) => minutesInputOnChange(e)} />
                                 }
                                 <Button variant="outline" className="bg-green-600 text-white" onClick={setHoursAndMinutes}>Start Timer</Button>
                             </div>
