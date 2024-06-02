@@ -30,8 +30,8 @@ const Header = () => {
                     </DropdownMenu>
                 </div>
                 <div className="flex justify-center items-center">
-                    <CiLogin />
-                    <button className="ml-1">login</button>
+                    <CiLogin className="cursor-not-allowed" />
+                    <button className="ml-1 cursor-not-allowed">login</button>
                 </div>
             </div>
 
