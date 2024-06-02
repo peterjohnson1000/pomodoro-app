@@ -21,7 +21,7 @@ const useKeyPress = (callback: any, targetKey: any, minutes: any, modifierKey: a
 
     const handleKeyPress = useCallback((event: any) => {
         // console.log(`Key pressed useKeyPress: ${event.key}`);
-        if (event.key == targetKey && (!modifierKey || event[modifierKey])) {
+        if (event.key == targetKey && event[modifierKey]) {
             callback(event);
         }
     }, [minutes]);
