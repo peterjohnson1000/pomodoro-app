@@ -151,7 +151,9 @@ export default function CountdownTimer() {
         audio.play();
     }
 
-    Notification.requestPermission(); //this initially check for permission otherwise the request will be asked when timer ends.
+    if (typeof window !== "undefined" && 'Notification' in window) { // if not provided gives ReferenceError: Notification is not defined
+        Notification.requestPermission(); //this initially check for permission otherwise the request will be asked when timer ends.
+    }
 
     function notifyMe() {
         if (Notification.permission === "granted") {
