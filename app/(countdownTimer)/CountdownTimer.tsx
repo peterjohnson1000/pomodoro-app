@@ -151,6 +151,8 @@ export default function CountdownTimer() {
         audio.play();
     }
 
+    Notification.requestPermission(); //this initially check for permission otherwise the request will be asked when timer ends.
+
     function notifyMe() {
         if (Notification.permission === "granted") {
             const notification = new Notification("Time Up!");
