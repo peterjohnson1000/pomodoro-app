@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState, useCallback } from "react";
+import useKeyPress from "../(hook)/useKeyPress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaRegStopCircle } from "react-icons/fa";
@@ -26,19 +27,22 @@ export default function CountdownTimer() {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
     }
 
-    const handleKeyPress = useCallback((event: any) => {
-        // console.log(`Key pressed: ${event.key}`);
-        if (`${event.key}` == "s") {
-            if (startorstop) {
+    const handleKeyPress = (event: any) => {
+        // console.log(`Key pressed CountdownTimer: ${event.key}`);
+        if (startorstop) {
+            if (event.ctrlKey && event.key == " ") {
                 setHoursAndMinutes(event);
                 startorstop = false;
             }
-            else {
-                stopTimer();
-                startorstop = true;
-            }
         }
-    }, [minutes]);
+        else {
+            stopTimer();
+            startorstop = true;
+        }
+        // in order to use key combinations {event.metaKey && event.key == "Enter"}
+    }
+
+    useKeyPress(handleKeyPress, ' ', minutes, 'ctrlKey');
 
     useEffect(() => {
 
@@ -49,8 +53,6 @@ export default function CountdownTimer() {
         if (time == 0) {
             document.title = "0h : 0m : 0s"
             if (!stop && initialDataFetched) {
-                console.log("test");
-                console.log("stop", stop);
                 // initialDataFetched added otherwise notification will be triggered for every refresh
                 //play a sound when timer naturally becomes 0
                 // playAudio();
@@ -86,20 +88,20 @@ export default function CountdownTimer() {
         setInitialDataFetched(true);
     }, []);
 
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyPress);
+    // useEffect(() => {
+    //     document.addEventListener('keydown', handleKeyPress);
 
-        return () => { //this represents componentwillunmount
-            document.removeEventListener('keydown', handleKeyPress);
-        };
+    //     return () => { //this represents componentwillunmount
+    //         document.removeEventListener('keydown', handleKeyPress);
+    //     };
 
-        // this useEffect hook is called only once that is during the initial 
-        // render(which means no matter what useEffect will be called during the inital render).
-        // the keydown even is mapped with handleKeyPress function and is stored in the browsers internal list of events
-        // whenever a respective event occurs the corresponding fuctions mapped to that event will be called.
-        // since handleKeyPress is memoized this useEffect won't be called again.
-        // just before the component is about to be unmounted the cleanup function is called which is executes removeEventListener
-    }, [handleKeyPress]);
+    // this useEffect hook is called only once that is during the initial 
+    // render(which means no matter what useEffect will be called during the inital render).
+    // the keydown even is mapped with handleKeyPress function and is stored in the browsers internal list of events
+    // whenever a respective event occurs the corresponding fuctions mapped to that event will be called.
+    // since handleKeyPress is memoized this useEffect won't be called again.
+    // just before the component is about to be unmounted the cleanup function is called which is executes removeEventListener
+    // }, [handleKeyPress]);
 
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -150,7 +152,6 @@ export default function CountdownTimer() {
     }
 
     function notifyMe() {
-        console.log("test2");
         if (Notification.permission === "granted") {
             const notification = new Notification("Time Up!");
         } else if (Notification.permission !== "denied") {
@@ -183,7 +184,7 @@ export default function CountdownTimer() {
                 </div>
             </div>
 
-            <div className="my-5">
+            <div className="mt-10 mb-5">
                 {
                     time > 0 ?
                         <div className="flex justify-center items-center">
