@@ -1,5 +1,6 @@
 import { CiKeyboard, CiLogin } from "react-icons/ci";
 import { GiFrog } from "react-icons/gi";
+import { FaRegChartBar } from "react-icons/fa";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -19,8 +20,12 @@ const Header = () => {
                 <GiFrog />
                 <p className="ml-1">eathefrogfirst</p>
             </div>
-            <div className="w-[200px] flex justify-around">
+            <div className="w-[250px] flex justify-around">
                 <div className="flex justify-center items-center">
+                    <FaRegChartBar className="cursor-not-allowed" />
+                    <button className="ml-1 cursor-not-allowed">Report</button>
+                </div>
+                <div className="flex justify-center items-center mx-3">
                     <CiKeyboard className="mr-1" />
                     <DropdownMenu>
                         <DropdownMenuTrigger>shortcuts</DropdownMenuTrigger>
