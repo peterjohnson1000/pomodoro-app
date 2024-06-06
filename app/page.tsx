@@ -1,3 +1,4 @@
+import Analytics from "./(analytics)/Analytics";
 import CountdownTimer from "./(countdownTimer)/CountdownTimer";
 import Header from "./(header)/Header";
 import Alltask from "./(task)/Task";
@@ -9,6 +10,7 @@ export default function Home() {
       <Header />
       <CountdownTimer />
       <Alltask />
+      <Analytics />
     </div>
   );
 }
