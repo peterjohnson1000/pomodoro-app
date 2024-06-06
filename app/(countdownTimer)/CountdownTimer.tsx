@@ -22,6 +22,7 @@ export default function CountdownTimer() {
         seconds: 0
     });
     const startTimeRef = useRef<any>();
+    const analyticsData = useRef<any>([]);
 
     const totalTimeCalculator = (hours: number, minutes: number) => {
         return ((hours * 60 * 60 * 1000) + (minutes * 60 * 1000))
@@ -58,6 +59,7 @@ export default function CountdownTimer() {
                 // playAudio();
                 setStop(false);
                 notifyMe();
+                setAnalyticsDataToLocalStorage(minutes);
             }
         }
 
@@ -80,8 +82,30 @@ export default function CountdownTimer() {
         return () => clearInterval(timer);
     }, [time, pause])
 
+    const setAnalyticsDataToLocalStorage = (completedMinutes: number) => {
+        // analyticsData
+
+        const newObj = {
+            currentTme: new Date().toLocaleString(),
+            currentMinutes: completedMinutes
+        }
+
+        analyticsData.current.push(newObj)
+        localStorage.setItem("analyticsData", JSON.stringify(analyticsData.current))
+    }
+
     useEffect(() => {
         const minutesFromLocalStorage = localStorage.getItem("minutes");
+        const analyticsDataFromLocalStorage = localStorage.getItem("analyticsData")
+
+        if (analyticsDataFromLocalStorage) {
+            const data = JSON.parse(analyticsDataFromLocalStorage);
+            // console.log(data.current[0].current)
+            // analyticsData.current.push(data.current[0].current);
+            analyticsData.current.push(...data);
+            // localStorage.removeItem("analyticsData")
+        }
+
         if (!initialDataFetched && minutesFromLocalStorage) {
             setMinutes(parseInt(minutesFromLocalStorage))
         }
@@ -121,7 +145,7 @@ export default function CountdownTimer() {
         e.preventDefault();
 
         // setDialogBoxOpen(!dialogBoxOpen)
-        const newTime = totalTimeCalculator(hours, minutes);
+        const newTime = totalTimeCalculator(hours, minutes - 0.9);
         setTime(newTime)
     }
 
