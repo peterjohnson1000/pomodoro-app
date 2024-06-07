@@ -1,5 +1,6 @@
 import { CiKeyboard, CiLogin } from "react-icons/ci";
 import { GiFrog } from "react-icons/gi";
+import { FaRegChartBar } from "react-icons/fa";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -9,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Shortcut from "../(shortcut)/Shortcut";
+import Analytics from "../(analytics)/Analytics";
 
 
 
@@ -19,11 +21,20 @@ const Header = () => {
                 <GiFrog />
                 <p className="ml-1">eathefrogfirst</p>
             </div>
-            <div className="w-[200px] flex justify-around">
+            <div className="w-[250px] flex justify-around">
                 <div className="flex justify-center items-center">
+                    <FaRegChartBar className="mr-1" />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>Report</DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <Analytics />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+                <div className="flex justify-center items-center mx-3">
                     <CiKeyboard className="mr-1" />
                     <DropdownMenu>
-                        <DropdownMenuTrigger>shortcuts</DropdownMenuTrigger>
+                        <DropdownMenuTrigger>Shortcuts</DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <Shortcut />
                         </DropdownMenuContent>
