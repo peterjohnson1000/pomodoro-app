@@ -10,6 +10,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Shortcut from "../(shortcut)/Shortcut";
+import Analytics from "../(analytics)/Analytics";
 
 
 
@@ -22,13 +23,18 @@ const Header = () => {
             </div>
             <div className="w-[250px] flex justify-around">
                 <div className="flex justify-center items-center">
-                    <FaRegChartBar className="cursor-not-allowed" />
-                    <button className="ml-1 cursor-not-allowed">Report</button>
+                    <FaRegChartBar className="mr-1" />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>Report</DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <Analytics />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
                 <div className="flex justify-center items-center mx-3">
                     <CiKeyboard className="mr-1" />
                     <DropdownMenu>
-                        <DropdownMenuTrigger>shortcuts</DropdownMenuTrigger>
+                        <DropdownMenuTrigger>Shortcuts</DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <Shortcut />
                         </DropdownMenuContent>

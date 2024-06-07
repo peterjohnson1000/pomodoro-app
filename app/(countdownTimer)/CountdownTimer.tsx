@@ -9,7 +9,7 @@ import { MdOutlineNotStarted } from "react-icons/md";
 
 export default function CountdownTimer() {
     const hours: number = 0;
-    let startorstop: Boolean = true; // used to differentiate between start and stop for shortcut "s" 
+    let startorstop: Boolean = true; // used to differentiate between start and stop for shortcut "s"
     const [minutes, setMinutes] = useState<number>(25);
     const [time, setTime] = useState<number>(0);
     const [pause, setPause] = useState<boolean>(false); //temp disabling the pause button
@@ -31,7 +31,7 @@ export default function CountdownTimer() {
     const handleKeyPress = (event: any) => {
         // console.log(`Key pressed CountdownTimer: ${event.key}`);
         if (startorstop) {
-            if (event.ctrlKey && event.key == " ") {
+            if (event.ctrlKey && event.key == " ") { // in order to use key combinations {event.metaKey && event.key == "Enter"}
                 setHoursAndMinutes(event);
                 startorstop = false;
             }
@@ -40,13 +40,11 @@ export default function CountdownTimer() {
             stopTimer();
             startorstop = true;
         }
-        // in order to use key combinations {event.metaKey && event.key == "Enter"}
     }
 
     useKeyPress(handleKeyPress, ' ', minutes, 'ctrlKey');
 
     useEffect(() => {
-
         if (time > 0) {
             document.title = formattedTime(time);;
         }
@@ -54,8 +52,6 @@ export default function CountdownTimer() {
         if (time == 0) {
             document.title = "0h : 0m : 0s"
             if (!stop && initialDataFetched) {
-                // initialDataFetched added otherwise notification will be triggered for every refresh
-                //play a sound when timer naturally becomes 0
                 // playAudio();
                 setStop(false);
                 notifyMe();
@@ -66,13 +62,10 @@ export default function CountdownTimer() {
         let timer: any;
         if (!pause && time > 0) {
             timer = setInterval(() => {
-                // due to the browser throttling issue we are going to use Date()
-                // even if the browser throttles we need to continue from elapsed time
-                let now = new Date().getTime(); //current time
+                let now = new Date().getTime(); // due to the browser throttling issue we are going to use Date()
                 const elapsedTime = now - (startTimeRef.current || now); //calculating the elapsed time
                 setTime((prevTime) => Math.max(prevTime - elapsedTime, 0));
                 startTimeRef.current = now;
-                // setTime((prevTime) => prevTime - 1000);
             }, 1000)
         }
         else {
@@ -83,10 +76,8 @@ export default function CountdownTimer() {
     }, [time, pause])
 
     const setAnalyticsDataToLocalStorage = (completedMinutes: number) => {
-        // analyticsData
-
         const newObj = {
-            currentTme: new Date().toLocaleString(),
+            currentTme: new Date().toLocaleTimeString(),
             currentMinutes: completedMinutes
         }
 
@@ -96,14 +87,30 @@ export default function CountdownTimer() {
 
     useEffect(() => {
         const minutesFromLocalStorage = localStorage.getItem("minutes");
-        const analyticsDataFromLocalStorage = localStorage.getItem("analyticsData")
+        const analyticsDataFromLocalStorage = localStorage.getItem("analyticsData");
+        const todaysDateDataFromLocalStorage = localStorage.getItem("todaysDate");
+
+
+        if (todaysDateDataFromLocalStorage) {
+            const freshelyComputedDate = new Date().toLocaleDateString();
+            if (freshelyComputedDate !== JSON.parse(todaysDateDataFromLocalStorage)) {
+                console.log("date not equal")
+                analyticsData.current = [];
+                localStorage.removeItem("analyticsData");
+                localStorage.setItem("todaysDate", JSON.stringify(new Date().toLocaleDateString()));
+            }
+        }
+        else {
+            localStorage.setItem("todaysDate", JSON.stringify(new Date().toLocaleDateString()));
+        }
+
 
         if (analyticsDataFromLocalStorage) {
             const data = JSON.parse(analyticsDataFromLocalStorage);
-            // console.log(data.current[0].current)
-            // analyticsData.current.push(data.current[0].current);
+            console.log("data from local", data);
+            analyticsData.current = [];
             analyticsData.current.push(...data);
-            // localStorage.removeItem("analyticsData")
+            console.log("data after pushing", analyticsData.current)
         }
 
         if (!initialDataFetched && minutesFromLocalStorage) {
@@ -112,20 +119,6 @@ export default function CountdownTimer() {
         setInitialDataFetched(true);
     }, []);
 
-    // useEffect(() => {
-    //     document.addEventListener('keydown', handleKeyPress);
-
-    //     return () => { //this represents componentwillunmount
-    //         document.removeEventListener('keydown', handleKeyPress);
-    //     };
-
-    // this useEffect hook is called only once that is during the initial 
-    // render(which means no matter what useEffect will be called during the inital render).
-    // the keydown even is mapped with handleKeyPress function and is stored in the browsers internal list of events
-    // whenever a respective event occurs the corresponding fuctions mapped to that event will be called.
-    // since handleKeyPress is memoized this useEffect won't be called again.
-    // just before the component is about to be unmounted the cleanup function is called which is executes removeEventListener
-    // }, [handleKeyPress]);
 
     const formattedTime = (time: any) => {
         const hours = Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -144,8 +137,8 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-        // setDialogBoxOpen(!dialogBoxOpen)
-        const newTime = totalTimeCalculator(hours, minutes - 0.9);
+
+        const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
 
@@ -193,8 +186,6 @@ export default function CountdownTimer() {
 
     return (
         <div className="flex justify-center flex-col items-center">
-            {/* <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl">{displayTimer.hours}h : {displayTimer.minutes}m : {displayTimer.seconds}s</h1> */}
-
             <div className="flex justify-center items-center">
                 <div className="text-center">
                     <h1 className="mt-10 border bg-black text-white p-5 rounded-xl text-5xl text-center w-[120px]">{displayTimer.hours < 0 ? `0${displayTimer.hours}` : displayTimer.hours}</h1>
@@ -219,20 +210,13 @@ export default function CountdownTimer() {
                             <FaRegStopCircle className="text-4xl mr-3 hover:cursor-pointer" onClick={stopTimer} />
                             {/* temp disabling the pause button */}
                             {/* <div onClick={() => setPause(!pause)}>
-                                {pause ? <MdOutlineNotStarted className="text-4xl hover:cursor-pointer" /> : <FaRegPauseCircle className="text-4xl hover:cursor-pointer" />}
-                            </div> */}
+                               {pause ? <MdOutlineNotStarted className="text-4xl hover:cursor-pointer" /> : <FaRegPauseCircle className="text-4xl hover:cursor-pointer" />}
+                           </div> */}
                         </div>
                         :
                         <div>
                             <p className="text-sm text-muted-foreground"> Enter time in minutes.</p>
                             <div className="flex items-center">
-                                {/* value={minutes ? minutes : ""} */}
-                                {/* {
-                                    !initialDataFetched ?
-                                    <Input className="col-span-2 h-10 mr-2" type="text" value="loading" readOnly/> :
-                                    <Input className="col-span-2 h-10 mr-2" type="number" value={minutes} onChange={(e) => minutesInputOnChange(e)} />    
-                                } */}
-                                {/* <Input className="col-span-2 h-10 mr-2" type={initialDataFetched ? "number" : "text"} value={initialDataFetched == false ? "fetching minutes..." : minutes} onChange={(e) => minutesInputOnChange(e)} /> */}
                                 {
                                     !initialDataFetched ?
                                         <p className="w-[185px] h-10 border p-2 rounded-md mr-2 my-1">fetching minutes...</p>

@@ -10,7 +10,6 @@ export default function Home() {
       <Header />
       <CountdownTimer />
       <Alltask />
-      <Analytics />
     </div>
   );
 }
