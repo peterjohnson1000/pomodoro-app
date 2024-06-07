@@ -25,7 +25,7 @@ const Header = () => {
                 <div className="flex justify-center items-center">
                     <FaRegChartBar className="mr-1" />
                     <DropdownMenu>
-                        <DropdownMenuTrigger>Report</DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="outline-none">Report</DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <Analytics />
                         </DropdownMenuContent>
@@ -34,7 +34,7 @@ const Header = () => {
                 <div className="flex justify-center items-center mx-3">
                     <CiKeyboard className="mr-1" />
                     <DropdownMenu>
-                        <DropdownMenuTrigger>Shortcuts</DropdownMenuTrigger>
+                        <DropdownMenuTrigger className="outline-none">Shortcuts</DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <Shortcut />
                         </DropdownMenuContent>
