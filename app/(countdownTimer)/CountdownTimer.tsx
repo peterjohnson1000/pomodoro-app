@@ -58,7 +58,6 @@ export default function CountdownTimer() {
                 setAnalyticsDataToLocalStorage(minutes);
             }
         }
-
         let timer: any;
         if (!pause && time > 0) {
             timer = setInterval(() => {
@@ -80,23 +79,20 @@ export default function CountdownTimer() {
             currentTme: new Date().toLocaleTimeString(),
             currentMinutes: completedMinutes
         }
-
         analyticsData.current.push(newObj)
         localStorage.setItem("analyticsData", JSON.stringify(analyticsData.current))
     }
 
     useEffect(() => {
         const minutesFromLocalStorage = localStorage.getItem("minutes");
-        const analyticsDataFromLocalStorage = localStorage.getItem("analyticsData");
         const todaysDateDataFromLocalStorage = localStorage.getItem("todaysDate");
-
 
         if (todaysDateDataFromLocalStorage) {
             const freshelyComputedDate = new Date().toLocaleDateString();
             if (freshelyComputedDate !== JSON.parse(todaysDateDataFromLocalStorage)) {
                 console.log("date not equal")
-                analyticsData.current = [];
                 localStorage.removeItem("analyticsData");
+                analyticsData.current = [];
                 localStorage.setItem("todaysDate", JSON.stringify(new Date().toLocaleDateString()));
             }
         }
@@ -104,6 +100,7 @@ export default function CountdownTimer() {
             localStorage.setItem("todaysDate", JSON.stringify(new Date().toLocaleDateString()));
         }
 
+        const analyticsDataFromLocalStorage = localStorage.getItem("analyticsData");
 
         if (analyticsDataFromLocalStorage) {
             const data = JSON.parse(analyticsDataFromLocalStorage);
@@ -137,8 +134,7 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-
-        const newTime = totalTimeCalculator(hours, minutes);
+        const newTime = totalTimeCalculator(hours, minutes - 0.7);
         setTime(newTime)
     }
 
