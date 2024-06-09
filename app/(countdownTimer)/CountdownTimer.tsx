@@ -52,12 +52,15 @@ export default function CountdownTimer() {
         if (time == 0) {
             document.title = "0h : 0m : 0s"
             if (!stop && initialDataFetched) {
+                console.log("timer ended")
                 // playAudio();
                 setStop(false);
                 notifyMe();
                 setAnalyticsDataToLocalStorage(minutes);
+                // stopTimer();
             }
         }
+
         let timer: any;
         if (!pause && time > 0) {
             timer = setInterval(() => {
@@ -134,7 +137,7 @@ export default function CountdownTimer() {
     const setHoursAndMinutes = (e: any) => {
         e.preventDefault();
 
-        const newTime = totalTimeCalculator(hours, minutes - 0.7);
+        const newTime = totalTimeCalculator(hours, minutes);
         setTime(newTime)
     }
 
